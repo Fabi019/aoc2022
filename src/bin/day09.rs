@@ -19,10 +19,7 @@ fn main() {
     let mut tails = vec![(0, 0); TAIL_LENGTH];
 
     let mut visited = HashSet::new();
-    visited.insert(tails.last().unwrap().clone());
-        
-    println!("== Initial State ==");
-    //print_grid(head, &tails);
+    visited.insert(head);
 
     for (dir, steps) in instructions {
         let (dx, dy) = match dir {
@@ -33,53 +30,23 @@ fn main() {
             _ => panic!("Invalid direction"),
         };
 
-        println!("== {} {} ==", dir, steps);
-        println!();
-
         for _ in 0..steps {
             head.0 += dx;
             head.1 += dy;
 
             let mut prev_tail = head;
 
-            println!("Head: {:?}", head);
-
             let mut _tails = tails.clone();
-            for (idx, tail) in _tails.iter_mut().enumerate() {
-                let tx = prev_tail.0 - tail.0;
-                let ty = prev_tail.1 - tail.1;
+            for tail in _tails.iter_mut() {
+                let tx: i32 = prev_tail.0 - tail.0;
+                let ty: i32 = prev_tail.1 - tail.1;
 
-                println!("Tail: {} at {:?}", idx, tail);
-                println!("tx: {} ty: {}", tx, ty);
-
-                if tx >= 2 {
-                    tail.0 += 1;
-                    if ty >= 1 {
-                        tail.1 += 1;
-                    } else if ty <= -1 {
-                        tail.1 -= 1;
-                    }
-                } else if tx <= -2 {
-                    tail.0 -= 1;
-                    if ty >= 1 {
-                        tail.1 += 1;
-                    } else if ty <= -1 {
-                        tail.1 -= 1;
-                    }
-                } else if ty >= 2 {
-                    tail.1 += 1;
-                    if tx >= 1 {
-                        tail.0 += 1;
-                    } else if tx <= -1 {
-                        tail.0 -= 1;
-                    }
-                } else if ty <= -2 {
-                    tail.1 -= 1;
-                    if tx >= 1 {
-                        tail.0 += 1;
-                    } else if tx <= -1 {
-                        tail.0 -= 1;
-                    }
+                if tx >= 2 || tx <= -2 {
+                    tail.0 += tx.signum();
+                    tail.1 += ty.signum();
+                } else if ty >= 2 || ty <= -2 {
+                    tail.1 += ty.signum();
+                    tail.0 += tx.signum();
                 }
 
                 prev_tail = *tail;
@@ -87,25 +54,8 @@ fn main() {
             tails = _tails;
 
             visited.insert(tails.last().unwrap().clone());
-
-            //print_grid(head, &tails);
         }
     }
 
     println!("Fields visited: {}", visited.len())
-}
-
-fn print_grid(head: (i32, i32), tails: &[(i32, i32)]) {
-    let mut grid = vec![vec!['.'; 30]; 30];
-    grid[6][12] = 's';
-    for (idx, tail) in tails.iter().enumerate().rev() {
-        grid[6 + tail.1 as usize][ 12 + tail.0 as usize] = (idx + 1).to_string().chars().next().unwrap();
-    }
-    grid[6 + head.1 as usize][ 12 + head.0 as usize] = 'H';
-    grid.reverse();
-    for row in grid {
-        println!("{}", row.iter().collect::<String>());
-    }
-    println!();
-    println!();
 }
