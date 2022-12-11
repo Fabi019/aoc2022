@@ -30,9 +30,9 @@ fn main() {
 
         let crt_pos: i32 = cycle % 40;
         if (x + 1).abs_diff(crt_pos) <= 1 {
-            print!("#");
+            print!("█");
         } else {
-            print!(".");
+            print!("░");
         }
 
         if crt_pos == 0 {
