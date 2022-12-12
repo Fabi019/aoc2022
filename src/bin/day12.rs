@@ -14,7 +14,7 @@ fn main() {
     // Find S and E positions in height_map
     let mut start = (0, 0);
     let mut dest = (0, 0);
-
+    
     let mut starts = Vec::new();
 
     for (y, row) in height_map.iter().enumerate() {
@@ -35,11 +35,9 @@ fn main() {
     height_map[dest.1][dest.0] = 'z' as u8;
 
     let path = dijkstra(&height_map, start, dest).unwrap();
-
     visualize_path(&height_map, &path);
 
     let mut minimum_lenght = path.len() - 1;
-
     for start in starts {
         if let Some(path) = dijkstra(&height_map, start, dest) {
             minimum_lenght = minimum_lenght.min(path.len() - 1);
@@ -107,37 +105,21 @@ fn dijkstra(
     Some(path)
 }
 
-fn neighbours(height_map: &[Vec<u8>], pos: (usize, usize)) -> Vec<(usize, usize)> {
+fn neighbours(height_map: &[Vec<u8>], (x, y): (usize, usize)) -> Vec<(usize, usize)> {
     let mut neighbours = Vec::new();
-
-    let (x, y) = pos;
     let current = height_map[y][x] as i32;
 
-    if x > 0 {
-        let target = height_map[y][x - 1] as i32;
-        if target - current <= 1 {
-            neighbours.push((x - 1, y));
-        }
-    }
+    for (dx, dy) in &[(-1, 0), (1, 0), (0, -1), (0, 1)] {
+        let tx = x as i32 + dx;
+        let ty = y as i32 + dy;
 
-    if x < height_map[0].len() - 1 {
-        let target = height_map[y][x + 1] as i32;
-        if target - current <= 1 {
-            neighbours.push((x + 1, y));
+        if tx < 0 || ty < 0 || tx >= height_map[0].len() as i32 || ty >= height_map.len() as i32 {
+            continue;
         }
-    }
 
-    if y > 0 {
-        let target = height_map[y - 1][x] as i32;
+        let target = height_map[ty as usize][tx as usize] as i32;
         if target - current <= 1 {
-            neighbours.push((x, y - 1));
-        }
-    }
-
-    if y < height_map.len() - 1 {
-        let target = height_map[y + 1][x] as i32;
-        if target - current <= 1 {
-            neighbours.push((x, y + 1));
+            neighbours.push((tx as usize, ty as usize));
         }
     }
 
@@ -146,22 +128,18 @@ fn neighbours(height_map: &[Vec<u8>], pos: (usize, usize)) -> Vec<(usize, usize)
 
 fn visualize_path(height_map: &[Vec<u8>], path: &[(usize, usize)]) {
     let mut path_map = vec![vec!['.'; height_map[0].len()]; height_map.len()];
-    for (i, pos) in path.iter().enumerate() {
-        if i == path.len() - 1 {
-            break;
-        }
-
+    for (i, pos) in path[..path.len()-1].iter().enumerate() {
         let next_pos = path[i + 1];
 
-        if next_pos.0 > pos.0 {
-            path_map[pos.1][pos.0] = '>';
-        } else if next_pos.0 < pos.0 {
-            path_map[pos.1][pos.0] = '<';
-        } else if next_pos.1 > pos.1 {
-            path_map[pos.1][pos.0] = 'v';
-        } else if next_pos.1 < pos.1 {
-            path_map[pos.1][pos.0] = '^';
-        }
+        let c = match next_pos {
+            (x, _) if x > pos.0 => '>',
+            (x, _) if x < pos.0 => '<',
+            (_, y) if y > pos.1 => 'v',
+            (_, y) if y < pos.1 => '^',
+            _ => unreachable!(),
+        };
+
+        path_map[pos.1][pos.0] = c;
     }
 
     for row in path_map {
