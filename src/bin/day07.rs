@@ -27,6 +27,7 @@ impl FileSystem {
         current.folder.insert(folder.name.clone(), folder)
     }
 
+    #[allow(dead_code)]
     fn get_folder(&self, path: &[String]) -> Option<&Folder> {
         let mut current = &self.root;
         for name in path {
