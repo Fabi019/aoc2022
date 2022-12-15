@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 static INPUT: &str = include_str!("../../assets/day15.txt");
 
@@ -21,72 +21,68 @@ fn main() {
 }
 
 fn part1(map: &HashMap<(i32, i32), Sensor>) {
-    let target_y = 2000000;
-    let mut not_map = HashSet::new();
+    let y = 2000000;
 
-    for (pos @ (x, y), Sensor(beacon, distance)) in map.iter() {
-        println!("S: {:?} -> {:?}; d = {}", pos, beacon, distance);
+    let mut ranges = Vec::new();
 
-        if y + distance < target_y {
-            continue;
-        }
-
-        let y = target_y;
-        for x in x - distance..=x + distance {
-            let current = (x, y);
-            if &current == beacon {
-                continue;
-            }
-            if manhatten_distance(pos, &current) <= *distance {
-                not_map.insert(current);
-            }
+    // Collect all ranges of sensors at y-coordinate
+    for ((sx, sy), Sensor(_, dst)) in map {
+        let dy = sy.abs_diff(y) as i32;
+        if dy <= *dst {
+            let offset = dst.abs_diff(dy) as i32;
+            let (start, end) = (sx - offset, sx + offset);
+            ranges.push((start, end));
         }
     }
 
-    println!("Part 1: {}", not_map.len());
+    ranges.sort_unstable_by_key(|(start, _)| *start);
+
+    // Merge overlapping ranges
+    let result = ranges.iter().fold(Vec::new(), |mut res, r @ (_, hi)| {
+        match res.last() {
+            Some((last_lo, last_hi)) if last_lo < hi => {
+                let len = res.len();
+                res[len - 1] = (*last_lo, *hi.max(last_hi));
+            }
+            None => res.push(*r),
+            _ => (),
+        }
+        res
+    });
+
+    // Sum the lengths of all the ranges
+    let count = result
+        .iter()
+        .map(|(start, end)| start.abs_diff(*end))
+        .sum::<u32>();
+
+    println!("Part 1: {}", count);
 }
 
 fn part2(map: &HashMap<(i32, i32), Sensor>) {
     let max_x: i32 = 4000000;
     let max_y: i32 = 4000000;
 
-    let mut ranges: Vec<(i32, i32)> = Vec::new();
-
     for y in 0..=max_y {
-        ranges.clear();
+        let mut x = 0;
 
-        // Calculate the range span for each sensor on this line
-        for ((sx, sy), Sensor(_, distance)) in map {
-            let dy = sy.abs_diff(y) as i32;
-            if dy <= *distance {
-                let offset = distance.abs_diff(dy) as i32;
-                ranges.push((sx - offset, sx + offset));
+        while x <= max_x {
+            let current = (x, y);
+
+            // Find next sensor in range
+            let sensor = map
+                .iter()
+                .find(|(s, Sensor(_, dst))| manhatten_distance(s, &current) <= *dst);
+
+            // Calculate next x-coordinate
+            if let Some(((sx, sy), Sensor(_, dst))) = sensor {
+                let dy = sy.abs_diff(y) as i32;
+                let offset = dst.abs_diff(dy) as i32;
+                x = sx + offset + 1;
+            } else {
+                println!("Part 2: {}", (x as isize) * 4000000 + y as isize);
+                return;
             }
-        }
-
-        // Sort the ranges by x coordinate
-        ranges.sort_unstable_by_key(|(x, _)| *x);
-
-        // Combine overlapping ranges
-        let mut combined: Vec<(i32, i32)> = Vec::new();
-        let mut current_end = &ranges[0].1;
-
-        for (start, end) in &ranges {
-            combined.retain(|(s, e)| s > start || e < end);
-
-            if *start > current_end + 1 && *end < max_x - 1 {
-                combined.push((current_end + 1, start - 1));
-            }
-
-            current_end = end.max(current_end);
-        }
-
-        // Check if there are any ranges left
-        if combined.len() > 0 {
-            for (l, _) in combined {
-                println!("Part 2: {}", (l as isize) * 4000000 + y as isize);
-            }
-            break;
         }
     }
 }
