@@ -123,23 +123,18 @@ fn cached_dfs(
 
     current.hash(&mut hasher);
     time_left.hash(&mut hasher);
-    for v in opened {
-        v.hash(&mut hasher);
-    }
+    opened.hash(&mut hasher);
 
     let key = hasher.finish();
 
-    if let Some(r) = MEMOIZED_MAPPING_DFS.with(|m| m.borrow().get(&key).cloned()) {
-        return r;
-    }
-
-    let r = dfs(current, opened, time_left, valves);
-
     MEMOIZED_MAPPING_DFS.with(|m| {
+        if let Some(r) = m.borrow().get(&key) {
+            return *r;
+        }
+        let r = dfs(current, opened, time_left, valves);
         m.borrow_mut().insert(key, r);
-    });
-
-    r
+        r
+    })
 }
 
 fn cached_dfs2(
@@ -152,21 +147,16 @@ fn cached_dfs2(
 
     current.hash(&mut hasher);
     time_left.hash(&mut hasher);
-    for v in opened {
-        v.hash(&mut hasher);
-    }
+    opened.hash(&mut hasher);
 
     let key = hasher.finish();
 
-    if let Some(r) = MEMOIZED_MAPPING_DFS_2.with(|m| m.borrow().get(&key).cloned()) {
-        return r;
-    }
-
-    let r = dfs2(current, opened, time_left, valves);
-
     MEMOIZED_MAPPING_DFS_2.with(|m| {
+        if let Some(r) = m.borrow().get(&key) {
+            return *r;
+        }
+        let r = dfs2(current, opened, time_left, valves);
         m.borrow_mut().insert(key, r);
-    });
-
-    r
+        r
+    })
 }
