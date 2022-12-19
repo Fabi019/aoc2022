@@ -4,7 +4,7 @@ static INPUT: &str = include_str!("../../assets/day18.txt");
 
 type Point3D = (i32, i32, i32);
 
-const OFFSETS: [(i32, i32, i32); 6] = [
+const OFFSETS: [Point3D; 6] = [
     (-1, 0, 0),
     (1, 0, 0),
     (0, -1, 0),
@@ -63,7 +63,6 @@ fn main() {
 
     // Increase stack size to avoid stack overflow
     let builder = thread::Builder::new().stack_size(2 * 1024 * 1024);
-
     let handler = builder
         .spawn(move || {
             let mut visited: HashSet<Point3D> = HashSet::new();
