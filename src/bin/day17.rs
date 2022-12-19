@@ -1,4 +1,4 @@
-use std::{cmp::max, collections::HashMap, iter::Cycle, slice::Iter};
+use std::{collections::HashMap, iter::Cycle, slice::Iter};
 
 static INPUT: &str = include_str!("../../assets/day17.txt");
 
@@ -160,48 +160,4 @@ fn check_collision(piece: &Piece, chamber: &HashMap<(usize, usize), bool>) -> bo
     }
 
     false
-}
-
-fn print_chamber(chamber: &HashMap<(usize, usize), bool>, piece: &Option<Piece>) {
-    let mut max_y = chamber.iter().map(|((_, y), _)| *y).max().unwrap_or(0);
-
-    if let Some(Piece {
-        pos: (_, y),
-        size: (_, h),
-        ..
-    }) = piece
-    {
-        max_y = max(max_y, *y + h);
-    }
-
-    for y in (0..=max_y).rev() {
-        print!("|");
-        for x in 0..7 {
-            print!(
-                "{}",
-                if chamber.contains_key(&(x, y)) {
-                    "#"
-                } else {
-                    match piece {
-                        Some(Piece {
-                            pos: (px, py),
-                            size: (w, h),
-                            pixels,
-                            ..
-                        }) if *py <= y
-                            && y < *py + h
-                            && *px <= x
-                            && x < *px + w
-                            && pixels[y - py][x - px] =>
-                        {
-                            "@"
-                        }
-                        _ => ".",
-                    }
-                }
-            );
-        }
-        println!("|");
-    }
-    println!("+-------+");
 }
