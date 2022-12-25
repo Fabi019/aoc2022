@@ -93,7 +93,7 @@ fn find_fastest_path(
             let new_pos @ (_, ny) = (x + dx, y + dy);
 
             // Check if we can move to the new position
-            if !(walls.contains(&new_pos) || ny < 0)
+            if !(walls.contains(&new_pos) || ny < 0 || ny > height)
                 && !blizzards.iter().any(|(b, _)| b == &new_pos)
             {
                 queue.insert((steps + 1, new_pos));
