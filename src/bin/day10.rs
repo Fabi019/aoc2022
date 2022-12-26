@@ -47,9 +47,9 @@ fn main() {
                     current_instruction += 1;
                 }
             } else {
-                match inst {
-                    &"addx" => wait_cycles = 1,
-                    &"noop" => current_instruction += 1,
+                match *inst {
+                    "addx" => wait_cycles = 1,
+                    "noop" => current_instruction += 1,
                     _ => panic!("Invalid instruction"),
                 }
             }

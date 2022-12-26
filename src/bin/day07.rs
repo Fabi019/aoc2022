@@ -37,14 +37,14 @@ impl FileSystem {
     }
 
     fn get_all_folders(&self) -> Vec<&Folder> {
-        self.get_all_folders_recursive(&self.root)
+        FileSystem::get_all_folders_recursive(&self.root)
     }
 
-    fn get_all_folders_recursive<'a>(&self, folder: &'a Folder) -> Vec<&'a Folder> {
+    fn get_all_folders_recursive(folder: &Folder) -> Vec<&Folder> {
         let mut folders = Vec::new();
         folders.push(folder);
-        for (_, current) in &folder.folder {
-            folders.extend(self.get_all_folders_recursive(current));
+        for current in folder.folder.values() {
+            folders.extend(FileSystem::get_all_folders_recursive(current));
         }
         folders
     }
@@ -58,19 +58,19 @@ impl FileSystem {
     }
 
     fn print_tree(&self) {
-        self.print_folder_tree(&self.root, 0);
+        FileSystem::print_folder_tree(&self.root, 0);
     }
 
-    fn print_folder_tree(&self, folder: &Folder, depth: usize) {
+    fn print_folder_tree(folder: &Folder, depth: usize) {
         println!(
             "{:>width$} (dir, {})",
             folder.name,
-            self.directory_size(folder),
+            FileSystem::directory_size(folder),
             width = depth + folder.name.len()
         );
 
         // Print all files
-        for (_, file) in &folder.files {
+        for file in folder.files.values() {
             println!(
                 "{:>width$} (file, {})",
                 file.name,
@@ -80,17 +80,17 @@ impl FileSystem {
         }
 
         // Print all folders
-        for (_, folder) in &folder.folder {
-            self.print_folder_tree(folder, depth + 2);
+        for folder in folder.folder.values() {
+            FileSystem::print_folder_tree(folder, depth + 2);
         }
     }
 
-    fn directory_size(&self, folder: &Folder) -> u64 {
+    fn directory_size(folder: &Folder) -> u64 {
         let file_size = folder.files.values().fold(0, |acc, file| acc + file.size);
         folder
             .folder
             .values()
-            .fold(file_size, |acc, folder| acc + self.directory_size(folder))
+            .fold(file_size, |acc, folder| acc + FileSystem::directory_size(folder))
     }
 }
 
@@ -168,7 +168,7 @@ fn main() {
     let sum = file_system
         .get_all_folders()
         .iter()
-        .map(|folder| file_system.directory_size(folder))
+        .map(|folder| FileSystem::directory_size(folder))
         .filter(|&size| size <= 100000)
         .sum::<u64>();
     println!("Folder Size <=100000: {}", sum);
@@ -176,13 +176,13 @@ fn main() {
     // Part two: Smalles folder to delete to get 30000000 free space
     let total_space = 70000000;
     let space_needed = 30000000;
-    let used_space = file_system.directory_size(&file_system.root);
+    let used_space = FileSystem::directory_size(&file_system.root);
     let available_space = total_space - used_space;
     let space_to_delete = space_needed - available_space;
 
     let mut smallest_folder_size = u64::MAX;
     for folder in file_system.get_all_folders() {
-        let size = file_system.directory_size(folder);
+        let size = FileSystem::directory_size(folder);
         if size >= space_to_delete && size < smallest_folder_size {
             smallest_folder_size = size;
         }

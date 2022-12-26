@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, cmp::Ordering};
 
 static INPUT: &str = include_str!("../../assets/day21.txt");
 
@@ -59,12 +59,10 @@ fn main() {
 
         println!("{} {} {} {}", min, mid, max, a - b);
 
-        if a == b {
-            break;
-        } else if a > b {
-            min = mid + 1;
-        } else {
-            max = mid - 1;
+        match a.cmp(&b) {
+            Ordering::Less => max = mid - 1,
+            Ordering::Equal => break,
+            Ordering::Greater => min = mid + 1,
         }
     }
 

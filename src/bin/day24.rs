@@ -54,21 +54,23 @@ fn main() {
     println!("Part 2: {}", total_steps);
 }
 
+type Blizzard = ((i32, i32), Facing);
+
 fn find_fastest_path(
     walls: &HashSet<(i32, i32)>,
-    blizzard: &Vec<((i32, i32), Facing)>,
+    blizzard: &[Blizzard],
     start: (i32, i32),
     end: (i32, i32),
     width: i32,
     height: i32,
-) -> (i32, Vec<((i32, i32), Facing)>) {
+) -> (i32, Vec<Blizzard>) {
     let mut queue = BTreeSet::new();
 
     // Initial state
     queue.insert((0, start));
 
     let mut blizzard_map = HashMap::new();
-    blizzard_map.insert(0, blizzard.clone());
+    blizzard_map.insert(0, blizzard.to_owned());
 
     while let Some((steps, pos @ (x, y))) = queue.pop_first() {
         // Check if we reached the end
@@ -93,8 +95,10 @@ fn find_fastest_path(
             let new_pos @ (_, ny) = (x + dx, y + dy);
 
             // Check if we can move to the new position
-            if !(walls.contains(&new_pos) || ny < 0 || ny > height)
-                && !blizzards.iter().any(|(b, _)| b == &new_pos)
+            if !(walls.contains(&new_pos)
+                || ny < 0
+                || ny > height
+                || blizzards.iter().any(|(b, _)| b == &new_pos))
             {
                 queue.insert((steps + 1, new_pos));
             }

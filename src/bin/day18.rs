@@ -75,9 +75,11 @@ fn main() {
     println!("Part 2: {:?}", count);
 }
 
+type Bounds = ((i32, i32), (i32, i32), (i32, i32));
+
 fn outside_surface(
     coord @ (x, y, z): Point3D,
-    bounds: &((i32, i32), (i32, i32), (i32, i32)),
+    bounds: &Bounds,
     cubes: &HashSet<Point3D>,
     visited: &mut HashSet<Point3D>,
 ) -> i32 {

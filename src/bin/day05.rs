@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 static INPUT: &str = include_str!("../../assets/day05.txt");
 
 fn main() {
-    let mut stacks = BTreeMap::new();
+    let mut stacks: BTreeMap<usize, Vec<_>> = BTreeMap::new();
     let mut start_idx = 1;
 
     // Parse stacks
@@ -14,10 +14,7 @@ fn main() {
 
         for (idx, _) in line.match_indices('[') {
             let c = line.chars().nth(idx + 1).unwrap();
-            stacks
-                .entry(((idx + 3) / 4) + 1)
-                .or_insert(Vec::new())
-                .push(c);
+            stacks.entry(((idx + 3) / 4) + 1).or_default().push(c);
         }
 
         start_idx += 1;
@@ -66,8 +63,8 @@ fn main() {
     println!(
         "Top: {}",
         stacks
-            .iter()
-            .map(|(_, stack)| stack.last().unwrap())
+            .values()
+            .map(|stack| stack.last().unwrap())
             .collect::<String>()
     );
 }

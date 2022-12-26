@@ -70,7 +70,7 @@ fn main() {
         let targets = target_positions.clone();
 
         // Check if there are duplicate target positions
-        for (_, target) in &targets {
+        for target in targets.values() {
             let duplicates = targets
                 .iter()
                 .filter(|(_, t)| t == &target)

@@ -28,13 +28,13 @@ impl FileSystem {
     }
 
     fn get_all_folders(&self) -> Vec<&Folder> {
-        self.get_all_folders_recursive(&self.root)
+        FileSystem::get_all_folders_recursive(&self.root)
     }
 
-    fn get_all_folders_recursive<'a>(&self, folder: &'a Folder) -> Vec<&'a Folder> {
+    fn get_all_folders_recursive(folder: &Folder) -> Vec<&Folder> {
         let mut folders = Vec::from_iter(folder.folder.values());
-        for (_, current) in &folder.folder {
-            folders.extend(self.get_all_folders_recursive(current));
+        for current in folder.folder.values() {
+            folders.extend(FileSystem::get_all_folders_recursive(current));
         }
         folders
     }
