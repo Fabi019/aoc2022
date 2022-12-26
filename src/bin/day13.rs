@@ -50,7 +50,7 @@ impl FromStr for Entry {
 impl Entry {
     fn compare_to(&self, right: &Self) -> Ordering {
         match (self, right) {
-            (Entry::Integer(left), Entry::Integer(right)) => left.cmp(&right),
+            (Entry::Integer(left), Entry::Integer(right)) => left.cmp(right),
             (Entry::List(l), Entry::List(r)) => {
                 for (left, right) in l.iter().zip(r.iter()) {
                     let order = left.compare_to(right);

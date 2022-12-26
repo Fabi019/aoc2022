@@ -21,7 +21,7 @@ fn main() {
     let mut monkeys = Vec::new();
     let mut monkey_product = 1;
 
-    let mut input = INPUT.lines().into_iter();
+    let mut input = INPUT.lines();
     while let Some(line) = input.next() {
         let items = input.next().unwrap()[18..]
             .split(", ")

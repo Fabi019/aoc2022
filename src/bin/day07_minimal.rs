@@ -87,13 +87,13 @@ fn main() {
             (Some("$"), Some("cd")) => match split.next().unwrap() {
                 "/" => current_path = Vec::new(),
                 ".." => _ = current_path.pop(),
-                path @ _ => current_path.push(path.to_string()),
+                path => current_path.push(path.to_string()),
             },
             (Some("$"), Some("ls")) => {}
-            (Some("dir"), Some(name @ _)) => {
+            (Some("dir"), Some(name)) => {
                 file_system.put_folder(&current_path, Folder::new(name.to_string()));
             }
-            (Some(size @ _), Some(name @ _)) => {
+            (Some(size), Some(name)) => {
                 file_system.put_file(
                     &current_path,
                     File {

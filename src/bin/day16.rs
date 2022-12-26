@@ -52,7 +52,7 @@ fn dfs(
 
     // Check when skipping this valve
     for path in &valve.tunnels {
-        best = max(best, cached_dfs(&path, opened, time_left - 1, valves));
+        best = max(best, cached_dfs(path, opened, time_left - 1, valves));
     }
 
     // Check when opening this valve
@@ -63,7 +63,7 @@ fn dfs(
         opened.insert(current.to_string());
 
         for path in &valve.tunnels {
-            let next = cached_dfs(&path, &opened, time_left - 2, valves);
+            let next = cached_dfs(path, &opened, time_left - 2, valves);
             best = max(best, flow + next);
         }
     }
@@ -88,7 +88,7 @@ fn dfs2(
 
     // Check when skipping this valve
     for path in &valve.tunnels {
-        best = max(best, cached_dfs2(&path, opened, time_left - 1, valves));
+        best = max(best, cached_dfs2(path, opened, time_left - 1, valves));
     }
 
     // Check when opening this valve
@@ -99,7 +99,7 @@ fn dfs2(
         opened.insert(current.to_string());
 
         for path in &valve.tunnels {
-            let next = cached_dfs2(&path, &opened, time_left - 2, valves);
+            let next = cached_dfs2(path, &opened, time_left - 2, valves);
             best = max(best, flow + next);
         }
     }

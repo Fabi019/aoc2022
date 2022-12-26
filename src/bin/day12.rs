@@ -31,8 +31,8 @@ fn main() {
     }
 
     // Replace S and E with a and z
-    height_map[start.1][start.0] = 'a' as u8;
-    height_map[dest.1][dest.0] = 'z' as u8;
+    height_map[start.1][start.0] = b'a';
+    height_map[dest.1][dest.0] = b'z';
 
     let path = dijkstra(&height_map, start, dest).unwrap();
     visualize_path(&height_map, &path);
@@ -144,7 +144,7 @@ fn visualize_path(height_map: &[Vec<u8>], path: &[(usize, usize)]) {
 
     for row in path_map {
         for c in row {
-            print!("{}", c as char);
+            print!("{}", c);
         }
         println!();
     }

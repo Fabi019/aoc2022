@@ -46,14 +46,14 @@ fn vertical_view_score(trees: &[Vec<u8>], x: usize, y: usize) -> usize {
         return 0;
     }
 
-    return (0..y)
+    (0..y)
         .rev()
         .take_while(|&i| trees[i][x] < trees[y][x])
         .count()
         * ((y + 1..trees.len())
             .take_while(|&i| trees[i][x] < trees[y][x])
             .count()
-            + 1);
+            + 1)
 }
 
 fn horizontal_view_score(trees: &[Vec<u8>], x: usize, y: usize) -> usize {
@@ -61,11 +61,11 @@ fn horizontal_view_score(trees: &[Vec<u8>], x: usize, y: usize) -> usize {
         return 0;
     }
 
-    return (0..x)
+    (0..x)
         .rev()
         .take_while(|&i| trees[y][i] < trees[y][x])
         .count()
         * ((x + 1..trees[y].len())
             .take_while(|&i| trees[y][i] < trees[y][x])
-            .count());
+            .count())
 }

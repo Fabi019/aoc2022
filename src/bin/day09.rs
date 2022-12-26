@@ -53,7 +53,7 @@ fn main() {
             }
             tails = _tails;
 
-            visited.insert(tails.last().unwrap().clone());
+            visited.insert(*tails.last().unwrap());
         }
     }
 

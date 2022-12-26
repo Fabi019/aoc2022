@@ -45,12 +45,11 @@ fn main() {
     }
 
     // Find first position in the fist column
-    let mut current = map
+    let mut current = *map
         .keys()
         .filter(|(_, y)| *y == 0)
         .min_by_key(|(x, _)| x)
-        .unwrap()
-        .clone();
+        .unwrap();
 
     let mut facing = Facing::Right;
 
@@ -77,7 +76,7 @@ fn main() {
             _ => {
                 let mut number = c.to_string();
                 while let Some(c) = password.peek() {
-                    if c.is_digit(10) {
+                    if c.is_ascii_digit() {
                         number.push(password.next().unwrap());
                     } else {
                         break;
@@ -151,7 +150,7 @@ fn wrap_cube_horizontal(pos: (i32, i32), facing: &Facing) -> (i32, i32, Facing) 
     let (mut x, mut y) = pos;
     let mut d = facing.clone();
 
-    if 0 <= y && y < 50 {
+    if (0..50).contains(&y) {
         if x >= 150 {
             x = 99;
             y = 149 - y;
@@ -161,7 +160,7 @@ fn wrap_cube_horizontal(pos: (i32, i32), facing: &Facing) -> (i32, i32, Facing) 
             y = 149 - y;
             d = Facing::Right;
         }
-    } else if 50 <= y && y < 100 {
+    } else if (50..100).contains(&y) {
         if x >= 100 {
             x = y + 50;
             y = 49;
@@ -171,7 +170,7 @@ fn wrap_cube_horizontal(pos: (i32, i32), facing: &Facing) -> (i32, i32, Facing) 
             y = 100;
             d = Facing::Down;
         }
-    } else if 100 <= y && y < 150 {
+    } else if (100..150).contains(&y) {
         if x >= 100 {
             x = 149;
             y = 149 - y;
@@ -181,7 +180,7 @@ fn wrap_cube_horizontal(pos: (i32, i32), facing: &Facing) -> (i32, i32, Facing) 
             y = 149 - y;
             d = Facing::Right;
         }
-    } else if 150 <= y && y < 200 {
+    } else if (150..200).contains(&y) {
         if x < 0 {
             x = y - 100;
             y = 0;
@@ -200,7 +199,7 @@ fn wrap_cube_vertical(pos: (i32, i32), facing: &Facing) -> (i32, i32, Facing) {
     let (mut x, mut y) = pos;
     let mut d = facing.clone();
 
-    if 0 <= x && x < 50 {
+    if (0..50).contains(&x) {
         if y < 100 {
             y = x + 50;
             x = 50;
@@ -209,7 +208,7 @@ fn wrap_cube_vertical(pos: (i32, i32), facing: &Facing) -> (i32, i32, Facing) {
             y = 0;
             x += 100;
         }
-    } else if 50 <= x && x < 100 {
+    } else if (50..100).contains(&x) {
         if y < 0 {
             y = x + 100;
             x = 0;
@@ -219,7 +218,7 @@ fn wrap_cube_vertical(pos: (i32, i32), facing: &Facing) -> (i32, i32, Facing) {
             x = 49;
             d = Facing::Left;
         }
-    } else if 100 <= x && x < 150 {
+    } else if (100..150).contains(&x) {
         if y < 0 {
             x -= 100;
             y = 199;

@@ -123,7 +123,7 @@ fn main() {
                         ".." => {
                             current_path.pop();
                         }
-                        path @ _ => current_path.push(path.to_string()),
+                        path => current_path.push(path.to_string()),
                     }
 
                     println!("Change directory: {:?}", current_path);
@@ -131,7 +131,7 @@ fn main() {
                 Some("ls") => println!("Listing folder"),
                 _ => panic!("Unknown command"),
             },
-            data @ _ => match data {
+            data => match data {
                 Some("dir") => {
                     let name = split.next().unwrap();
 
@@ -145,7 +145,7 @@ fn main() {
 
                     file_system.put_folder(&current_path, folder);
                 }
-                size @ _ => {
+                size => {
                     let name = split.next().unwrap();
                     let size = size.unwrap().parse::<u64>().unwrap();
 
@@ -153,7 +153,7 @@ fn main() {
 
                     let file = File {
                         name: name.to_string(),
-                        size: size,
+                        size,
                     };
 
                     file_system.put_file(&current_path, file);
